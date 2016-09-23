@@ -14,8 +14,8 @@ int main()
 	char buffer[256]; //Data buffer
 	struct sockaddr_in servAddr; // Server (local) socket address
 	struct sockaddr_in clntAddr; // Client (remote) socket address
-	int clntAddrLen; //Length of client socket address
-		
+	socklen_t clntAddrLen; //Length of client socket address
+
 	//Build local (server) socket address
 	memset(&servAddr, 0, sizeof(servAddr)); //Allocate memory
 	servAddr.sin_family = AF_INET; //Family field
@@ -23,7 +23,7 @@ int main()
 	servAddr.sin_addr.s_addr = htonl (INADDR_ANY);  //Default IP address
 	//printf("Local server address: %s\n", servAddr.sin_addr.s_addr);
 	//Create socket
-	if ((s = socket (PF_INET, SOCK_DGRAM, 0)) < 0)
+	if ((s = socket (AF_INET, SOCK_DGRAM, 0)) < 0)
 	{
 		perror("Error: socket failed!");
 		exit (1);
@@ -38,6 +38,7 @@ int main()
 	{
 		printf("Waiting...\n");
 		//Receice string
+        clntAddrLen = sizeof(clntAddr);
 		len = recvfrom (s, buffer, sizeof (buffer), 0, (struct sockaddr*)&clntAddr, &clntAddrLen);
 		printf("Message received: %s\n", buffer);
 		//Send string
